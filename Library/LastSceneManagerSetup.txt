@@ -1,0 +1,4 @@
+sceneSetups:
+- path: Assets/MU_Scenes/azlans scene for AI.unity
+  isLoaded: 1
+  isActive: 1
