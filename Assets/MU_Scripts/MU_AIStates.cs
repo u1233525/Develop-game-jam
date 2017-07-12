@@ -28,7 +28,10 @@ public class MU_AIStates : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-
+        if (GO_Target == null)
+        {
+            GO_Target = ClosestBlueEnemy;
+        }
         state = "idle";
         MyNavmeshAgent = GetComponent<NavMeshAgent>();
         InvokeRepeating("shoot", Fl_TimeDelayforFirstShot, Fl_TimeDelayBetweenShots);
@@ -37,24 +40,51 @@ public class MU_AIStates : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        changestatesbasedondistance();
-        ChangeTheStates();
-        DifferentStateReactions();
+        
         FindClosestEnemy();
         FindClosestBlueEnemy();
         FindClosestRedEnemy();
+        //closest red enemy is defined
+        //closest blue is defined
+        //check my distance from closest blue if im red and closest red if im blue
+        //if this distance is less than attack range change state to attack
+        //
+        ////////////////this uses old algorithm, only works if initial target is assigned//////
+        //changestatesbasedondistance();
+        ////////////////////////////
+        checkwhatteamimonandsetstates();
+        ChangeTheStates();
+        DifferentStateReactions();
+    }
+    void checkwhatteamimonandsetstates()
+    {
+        if(GetComponent<MU_ObjectProperties>().typeofenemy=="BlueEnemy")
+        {
+            if(Vector3.Distance(transform.position,ClosestRedEnemy.transform.position)<=AttackRange)
+            {
+                Bl_withinattackingdistance = true;
+            }
+        }
+        else if (GetComponent<MU_ObjectProperties>().typeofenemy == "RedEnemy")
+        {
+            if (Vector3.Distance(transform.position, ClosestBlueEnemy.transform.position) <= AttackRange)
+            {
+                Bl_withinattackingdistance = true;
+            }
+        }
     }
     void changestatesbasedondistance()
     {
-        if (Vector3.Distance(transform.position, GO_Target.transform.position) < AttackRange)
-        {
-            Bl_withinattackingdistance = true;
-        }
+            if (Vector3.Distance(transform.position, GO_Target.transform.position) < AttackRange)
+            {
+            print("Andy is right");
+                Bl_withinattackingdistance = true;
+            }
     }
-    void GetInStartingPositions()
-    {
+    //void GetInStartingPositions()
+    //{
 
-    }
+    //}
     void ChangeTheStates()
     {
         if (Bl_withinattackingdistance)
@@ -69,6 +99,17 @@ public class MU_AIStates : MonoBehaviour
             if (GetComponent<MU_ObjectProperties>().typeofenemy == "BlueEnemy")
             {
                 GO_Target = ClosestRedEnemy;
+                transform.LookAt(GO_Target.transform);
+                MyNavmeshAgent.SetDestination(GO_Target.transform.position);
+                if (Vector3.Distance(transform.position, GO_Target.transform.position) <= StoppingDistance)
+                {
+                    MyNavmeshAgent.SetDestination(transform.position);
+                    state = "Shooting";
+                }
+            }
+            else if (GetComponent<MU_ObjectProperties>().typeofenemy == "RedEnemy")
+            {
+                GO_Target = ClosestBlueEnemy;
                 transform.LookAt(GO_Target.transform);
                 MyNavmeshAgent.SetDestination(GO_Target.transform.position);
                 if (Vector3.Distance(transform.position, GO_Target.transform.position) <= StoppingDistance)
@@ -94,10 +135,10 @@ public class MU_AIStates : MonoBehaviour
             GameObject.Instantiate(GO_Bullet, GO_BulletSpawner.transform.position, transform.rotation);
         }
     }
-    void FindClosestZonetoEnemy()
-    {
+    //void FindClosestZonetoEnemy()
+    //{
 
-    }
+    //}
     void FindClosestEnemy()
     {
         arrayofenemies = GameObject.FindGameObjectsWithTag("Enemy");
