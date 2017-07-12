@@ -5,5 +5,6 @@ using UnityEngine;
 public class MU_ObjectProperties : MonoBehaviour
 {
     public float Fl_Health;
+    public string typeofenemy;
 
 }
