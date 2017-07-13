@@ -28,7 +28,8 @@ public class MU_AIStates : MonoBehaviour
     public GameObject[] Arrayoftiles;
     public List<GameObject> ListofRedEnemies = new List<GameObject>();
     public List<GameObject> ListofBlueEnemies = new List<GameObject>();
-    
+    public bool Bl_avoidvector=false;
+    public GameObject RetreatTarget;
     public float Fl_MinDistaanceFromTile;
 
 
@@ -53,6 +54,10 @@ public class MU_AIStates : MonoBehaviour
         if(state!="Attack")
         {
             Bl_withinattackingdistance = false;
+        }
+        if(GetComponent<MU_ObjectProperties>().Fl_Ammo==0)
+        {
+            Bl_canshoot = false;
         }
         FindClosestEnemy();
         FindClosestBlueEnemy();
@@ -152,6 +157,19 @@ public class MU_AIStates : MonoBehaviour
         {
             state = "Attack";
         }
+        //if(state=="Attack"&& GetComponent<MU_ObjectProperties>().Fl_Ammo==0)
+        //{
+        //    state = "outofammo";
+        //}
+        if(GetComponent<MU_ObjectProperties>().Fl_Ammo<=GetComponent<MU_ObjectProperties>().Fl_MinimumAllowedAmmo)
+        {
+            state = "Retreat";
+        }
+        if(state== "Retreat" && Vector3.Distance(transform.position,RetreatTarget.transform.position)<= 2)
+        {
+            Bl_canshoot = false;
+            state = "Waitingforammo";
+        }
         
     }
     void DifferentStateReactions()
@@ -193,6 +211,31 @@ public class MU_AIStates : MonoBehaviour
         {
             MyNavmeshAgent.SetDestination(GO_EnemyHomeBase.transform.position);
         }
+        if(state=="Retreat")
+        {
+            Bl_canshoot = false;
+            MyNavmeshAgent.SetDestination(RetreatTarget.transform.position); 
+        //    //RetreatTarget= transform.position + new Vector3(Random.Range(5, 10), 0, Random.Range(5, 10));
+        //    state = "Retreating";
+        //}
+        //if (state == "Retreating")
+        //{
+        // //   Bl_canshoot = false;
+        //    MyNavmeshAgent.SetDestination(RetreatTarget);
+        }
+        if(state=="waitingforammo")
+        {
+            if(GetComponent<MU_ObjectProperties>().Fl_Ammo>GetComponent<MU_ObjectProperties>().Fl_MinimumAllowedAmmo)
+            {
+                state = "movingtohomebase";
+            }
+        }
+        // when ive reached retreattarget
+        // check ammo
+        // if ammo is greater then minimum ammo allowed
+        // change state to movetohomebase if no closeby enemy exists
+
+
         // move towards an enemy set as the target
         // look at the enemy
         // stop moving if within a certain distance
@@ -202,7 +245,15 @@ public class MU_AIStates : MonoBehaviour
     {
         if (Bl_canshoot)
         {
-            GameObject.Instantiate(GO_Bullet, GO_BulletSpawner.transform.position, transform.rotation);
+            if (GetComponent<MU_ObjectProperties>().Fl_Ammo > 0)
+            {
+                GameObject.Instantiate(GO_Bullet, GO_BulletSpawner.transform.position, transform.rotation);
+                GetComponent<MU_ObjectProperties>().Fl_Ammo--;
+            }
+            else
+            {
+                Bl_canshoot = false;
+            }
         }
     }
     //void FindClosestZonetoEnemy()

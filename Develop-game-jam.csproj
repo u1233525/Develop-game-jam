@@ -78,9 +78,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\MU_Scripts\MU_AIStates.cs" />
-    <Compile Include="Assets\MU_Scripts\MU_Bullet.cs" />
-    <Compile Include="Assets\MU_Scripts\MU_ObjectProperties.cs" />
+    <Compile Include="Assets\Azlan\MU_Scripts\MU_AIStates.cs" />
+    <Compile Include="Assets\Azlan\MU_Scripts\MU_Bullet.cs" />
+    <Compile Include="Assets\Azlan\MU_Scripts\MU_ObjectProperties.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
