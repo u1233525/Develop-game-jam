@@ -22,8 +22,15 @@ public class MU_AIStates : MonoBehaviour
     public GameObject ClosestRedEnemy;
     public GameObject ClosestBlueEnemy;
     public GameObject[] arrayofenemies;
-    public List<GameObject> ListofRedEnemies=new List<GameObject>();
+    public GameObject targettile;
+    public GameObject GO_EnemyHomeBase;
+    public GameObject tileclosesttoenemy;
+    public GameObject[] Arrayoftiles;
+    public List<GameObject> ListofRedEnemies = new List<GameObject>();
     public List<GameObject> ListofBlueEnemies = new List<GameObject>();
+    
+    public float Fl_MinDistaanceFromTile;
+
 
     // Use this for initialization
     void Start()
@@ -33,6 +40,9 @@ public class MU_AIStates : MonoBehaviour
             GO_Target = ClosestBlueEnemy;
         }
         state = "idle";
+        //take this out//
+        Arrayoftiles = GameObject.FindGameObjectsWithTag("Tile");
+        //unneeded/////
         MyNavmeshAgent = GetComponent<NavMeshAgent>();
         InvokeRepeating("shoot", Fl_TimeDelayforFirstShot, Fl_TimeDelayBetweenShots);
     }
@@ -40,7 +50,10 @@ public class MU_AIStates : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if(state!="Attack")
+        {
+            Bl_withinattackingdistance = false;
+        }
         FindClosestEnemy();
         FindClosestBlueEnemy();
         FindClosestRedEnemy();
@@ -58,15 +71,51 @@ public class MU_AIStates : MonoBehaviour
     }
     void checkwhatteamimonandsetstates()
     {
-        if(GetComponent<MU_ObjectProperties>().typeofenemy=="BlueEnemy")
+
+        if (GetComponent<MU_ObjectProperties>().typeofenemy == "BlueEnemy")// if youre a blue enemy
         {
-            if(Vector3.Distance(transform.position,ClosestRedEnemy.transform.position)<=AttackRange)
+            if(state=="Attack")
+            {
+                if (Vector3.Distance(transform.position, ClosestRedEnemy.transform.position) > AttackRange && GetComponent<MU_ObjectProperties>().enemiesassembled == true)
+                {
+                    print("im coming home bbbbb");
+                    state = "movingtohomebase";
+                }
+            }
+            if (Vector3.Distance(transform.position, ClosestRedEnemy.transform.position) > AttackRange && GetComponent<MU_ObjectProperties>().enemiesassembled == false)
+            {
+                state = "movingintoposition";
+            }
+            if (Vector3.Distance(transform.position, ClosestRedEnemy.transform.position) > AttackRange && GetComponent<MU_ObjectProperties>().enemiesassembled == true)
+            {
+                print("im coming home");
+                state = "movingtohomebase";
+            }
+            // check if youre in attack range//
+            if (Vector3.Distance(transform.position, ClosestRedEnemy.transform.position) <= AttackRange)
             {
                 Bl_withinattackingdistance = true;
             }
         }
-        else if (GetComponent<MU_ObjectProperties>().typeofenemy == "RedEnemy")
+        else if (GetComponent<MU_ObjectProperties>().typeofenemy == "RedEnemy")// if youre a red enemy
         {
+            if (state == "Attack")
+            {
+                if (Vector3.Distance(transform.position, ClosestBlueEnemy.transform.position) > AttackRange && GetComponent<MU_ObjectProperties>().enemiesassembled == true)
+                {
+                    print("im coming home bbbbb");
+                    state = "movingtohomebase";
+                }
+            }
+            if (Vector3.Distance(transform.position, ClosestBlueEnemy.transform.position) > AttackRange && GetComponent<MU_ObjectProperties>().enemiesassembled==false)
+            {
+                state = "movingintoposition";
+            }
+            if(Vector3.Distance(transform.position, ClosestBlueEnemy.transform.position) > AttackRange && GetComponent<MU_ObjectProperties>().enemiesassembled == true)
+            {
+                state = "movingtohomebase";
+            }
+            //check if youre in attack range//
             if (Vector3.Distance(transform.position, ClosestBlueEnemy.transform.position) <= AttackRange)
             {
                 Bl_withinattackingdistance = true;
@@ -75,22 +124,35 @@ public class MU_AIStates : MonoBehaviour
     }
     void changestatesbasedondistance()
     {
-            if (Vector3.Distance(transform.position, GO_Target.transform.position) < AttackRange)
-            {
+        if (Vector3.Distance(transform.position, GO_Target.transform.position) < AttackRange)
+        {
             print("Andy is right");
-                Bl_withinattackingdistance = true;
+            Bl_withinattackingdistance = true;
+        }
+        if (Vector3.Distance(transform.position, GO_Target.transform.position) > AttackRange)
+        {
+            if (Bl_withinattackingdistance == true)
+            {
+                Bl_withinattackingdistance = false;
             }
+        }
     }
     //void GetInStartingPositions()
     //{
 
     //}
+
     void ChangeTheStates()
     {
-        if (Bl_withinattackingdistance)
+        if (Bl_withinattackingdistance && GetComponent<MU_ObjectProperties>().enemiesassembled != true)
+        {
+            state = "movingintoposition";
+        }
+        if (GetComponent<MU_ObjectProperties>().enemiesassembled == true && Bl_withinattackingdistance)
         {
             state = "Attack";
         }
+        
     }
     void DifferentStateReactions()
     {
@@ -123,6 +185,14 @@ public class MU_AIStates : MonoBehaviour
         {
             Bl_canshoot = true;
         }
+        if (state == "movingintoposition")
+        {
+            MyNavmeshAgent.SetDestination(targettile.transform.position);
+        }
+        if(state=="movingtohomebase")
+        {
+            MyNavmeshAgent.SetDestination(GO_EnemyHomeBase.transform.position);
+        }
         // move towards an enemy set as the target
         // look at the enemy
         // stop moving if within a certain distance
@@ -144,6 +214,10 @@ public class MU_AIStates : MonoBehaviour
         arrayofenemies = GameObject.FindGameObjectsWithTag("Enemy");
         foreach (GameObject go in arrayofenemies)
         {
+            if (Vector3.Distance(go.transform.position,targettile.transform.position) <= Fl_MinDistaanceFromTile)
+            {
+                go.GetComponent<MU_ObjectProperties>().enemiesassembled = true;
+            }
             if (go.GetComponent<MU_ObjectProperties>().typeofenemy == "RedEnemy")
             {
                 if (!ListofRedEnemies.Contains(go))
@@ -156,7 +230,7 @@ public class MU_AIStates : MonoBehaviour
                 print("kkkk");
                 if (!ListofBlueEnemies.Contains(go))
                 {
-                    ListofBlueEnemies.Add(go); 
+                    ListofBlueEnemies.Add(go);
                 }
             }
         }

@@ -39,7 +39,6 @@ public class MU_Bullet : MonoBehaviour
         {
             col.gameObject.GetComponent<MU_ObjectProperties>().Fl_Health -= 10;
             Destroy(gameObject);
-
         }
     }
 }
