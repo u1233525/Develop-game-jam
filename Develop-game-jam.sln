@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2015
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Develop-game-jam", "Develop-game-jam.csproj", "{21244696-F253-E2C1-A0D3-735E4F9B3EEC}"
+# Visual Studio 2013
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Develop-game-jam.CSharp", "Develop-game-jam.CSharp.csproj", "{2EFD7A69-ABE6-01E8-041A-6103636A1455}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,10 +9,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{21244696-F253-E2C1-A0D3-735E4F9B3EEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{21244696-F253-E2C1-A0D3-735E4F9B3EEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{21244696-F253-E2C1-A0D3-735E4F9B3EEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{21244696-F253-E2C1-A0D3-735E4F9B3EEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2EFD7A69-ABE6-01E8-041A-6103636A1455}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EFD7A69-ABE6-01E8-041A-6103636A1455}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2EFD7A69-ABE6-01E8-041A-6103636A1455}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2EFD7A69-ABE6-01E8-041A-6103636A1455}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
